@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const PermissionSchema = new Schema({
   role: {
     type: Schema.Types.ObjectId,
-    ref: "roles"
+    ref: "Role"
   },
   roleOrder: {
     type: Boolean,

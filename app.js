@@ -11,6 +11,7 @@ const { mongoURL } = require("./config/db");
 const RolesRoutes = require("./routes/RolesRoutes");
 const PermissionsRoutes = require("./routes/PermissionsRoutes");
 const UsersRoutes = require("./routes/UsersRoutes");
+const IssuesRoutes = require("./routes/IssuesRoutes");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -44,6 +45,7 @@ require("./config/passport")(passport);
 app.use("/api/roles", RolesRoutes);
 app.use("/api/permissions", PermissionsRoutes);
 app.use("/api/users", UsersRoutes);
+app.use("/api/issues", IssuesRoutes);
 
 // Server listen
 app.listen(port, () => {

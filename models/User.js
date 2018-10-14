@@ -21,11 +21,11 @@ const UserSchema = new Schema({
   },
   role: {
     type: Schema.Types.ObjectId,
-    ref: "roles"
+    ref: "Role"
   },
   permissions: {
     type: Schema.Types.ObjectId,
-    ref: "permissions"
+    ref: "Permission"
   }
 });
 
