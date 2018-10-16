@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const passport = require("passport");
-const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const path = require("path");
 const bodyParser = require("body-parser");
