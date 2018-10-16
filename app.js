@@ -11,6 +11,9 @@ const RolesRoutes = require("./routes/RolesRoutes");
 const PermissionsRoutes = require("./routes/PermissionsRoutes");
 const UsersRoutes = require("./routes/UsersRoutes");
 const IssuesRoutes = require("./routes/IssuesRoutes");
+const CategoriesRoutes = require("./routes/CategoriesRoutes");
+const SubCategoriesRoutes = require("./routes/SubCategoriesRoutes");
+const NewsRoutes = require("./routes/NewsRoutes");
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -45,6 +48,9 @@ app.use("/api/roles", RolesRoutes);
 app.use("/api/permissions", PermissionsRoutes);
 app.use("/api/users", UsersRoutes);
 app.use("/api/issues", IssuesRoutes);
+app.use("/api/categories", CategoriesRoutes);
+app.use("/api/sub_categories", SubCategoriesRoutes);
+app.use("/api/news", NewsRoutes);
 
 // Server listen
 app.listen(port, () => {

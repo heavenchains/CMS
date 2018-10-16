@@ -10,6 +10,13 @@ router.get("/", (req, res) => {
     });
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.body.id;
+  Permission.findOne({ _id: id })
+    .then(permission => res.json(permission))
+    .catch(err => res.json({ error: err.message }));
+});
+
 router.post("/create", (req, res) => {
   Permission.getPermissionById(req.body.role, (err, permission) => {
     if (err) res.json({ error: err.message });

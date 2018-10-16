@@ -8,6 +8,13 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.body.id;
+  Issue.findOne({ _id: id })
+    .then(issue => res.json(issue))
+    .catch(err => res.json({ error: err.message }));
+});
+
 router.post("/create", (req, res) => {
   const newIssue = new Issue({
     date: req.body.date,

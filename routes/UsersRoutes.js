@@ -2,21 +2,31 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const config = require("../config/db");
 const User = require("../models/User");
-const { objectWithoutKey } = require("../helpers/GlobalHelper");
 
 router.get("/", (req, res) => {
-  User.find({}).then(users => {
-    res.json(users);
-  });
+  User.find({})
+    .then(users => {
+      res.json(users);
+    })
+    .catch(err => res.json({ error: err.message }));
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+  User.findOne({ _id: id })
+    .then(singleUser => {
+      res.json(singleUser);
+    })
+    .catch(err => res.json({ error: err.message }));
+});
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
   User.deleteOne({ _id: id })
-    .then(data => res.json({ msg: "User has been deleted successfully!" }))
-    .catch(err => res.json({ error: err.messahe }));
+    .then(res.json({ msg: "User has been deleted successfully!" }))
+    .catch(err => res.json({ error: err.message }));
 });
 
 router.post("/register", (req, res) => {
@@ -86,7 +96,7 @@ router.post("/authenticate", (req, res) => {
 
         res.json({
           success: true,
-          token: "JWT " + token,
+          token: "BEARER " + token,
           user: {
             id: user._id,
             username: user.username,
@@ -109,6 +119,33 @@ router.get(
   (req, res) => {
     res.json({
       user: req.user
+    });
+  }
+);
+
+router.put(
+  "/profile/edit",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const id = req.user._id;
+    User.getUserById(id, (err, backUser) => {
+      if (err) res.json({ error: err.message });
+      backUser.username = req.body.username;
+      backUser.email = req.body.email;
+      backUser.avatar = req.body.avatar;
+      backUser.password = req.body.password;
+
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(backUser.password, salt, function(err, hash) {
+          // Store hash in your password DB.
+          if (err) throw err;
+          backUser.password = hash;
+          backUser
+            .save()
+            .then(updated => res.json(updated))
+            .catch(err => res.json({ error: err.message }));
+        });
+      });
     });
   }
 );

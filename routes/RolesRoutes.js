@@ -8,6 +8,13 @@ router.get("/", (req, res) => {
   });
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.body.id;
+  Role.findOne({ _id: id })
+    .then(role => res.json(role))
+    .catch(err => res.json({ error: err.message }));
+});
+
 router.post("/create", (req, res) => {
   Role.getRoleByName(req.body.role, (err, role) => {
     if (err) res.json({ error: err.message });
