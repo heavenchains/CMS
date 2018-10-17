@@ -3,14 +3,18 @@ const router = express.Router();
 const Issue = require("../models/Issue");
 
 router.get("/", (req, res) => {
-  Issue.find({}).then(issues => {
-    res.status(200).json(issues);
-  });
+  Issue.find({})
+    .populate("categories.category categories.subCategories.subCategory")
+    .then(issues => {
+      res.status(200).json(issues);
+    })
+    .catch(err => res.json({ error: err.message }));
 });
 
 router.get("/:id", (req, res) => {
-  const id = req.body.id;
+  const id = req.params.id;
   Issue.findOne({ _id: id })
+    .populate("categories.category categories.subCategories.subCategory")
     .then(issue => res.json(issue))
     .catch(err => res.json({ error: err.message }));
 });
@@ -18,21 +22,13 @@ router.get("/:id", (req, res) => {
 router.post("/create", (req, res) => {
   const newIssue = new Issue({
     date: req.body.date,
-    published: req.body.published
+    published: req.body.published,
+    categories: req.body.categories
   });
   Issue.addIssue(newIssue, (err, issue) => {
     if (err) res.json({ error: err.message });
     res.json(issue);
   });
-});
-
-router.get("/edit/:id", (req, res) => {
-  const id = req.params.id;
-  Issue.findOne({ _id: id })
-    .then(issue => {
-      res.json(issue);
-    })
-    .catch(err => res.json({ error: err.message }));
 });
 
 router.put("/edit/:id", (req, res) => {
@@ -41,6 +37,7 @@ router.put("/edit/:id", (req, res) => {
     .then(issue => {
       issue.date = req.body.date;
       issue.published = req.body.published;
+      issue.categories = req.body.categories;
       issue
         .save()
         .then(editedIssue => {

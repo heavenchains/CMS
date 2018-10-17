@@ -16,7 +16,17 @@ const NewsSchema = new Schema({
     default: false
   },
   newsTitle: {
-    type: String
+    hasTitle: {
+      type: Boolean,
+      default: false
+    },
+    title: {
+      type: String
+    },
+    titleOrder: {
+      type: Number,
+      default: 0
+    }
   },
   image: {
     type: String
@@ -58,11 +68,11 @@ const NewsSchema = new Schema({
     type: Number,
     default: 0
   },
-  categoryOrder: {
+  categoryNewsOrder: {
     type: Number,
     default: 0
   },
-  subCategoryOrder: {
+  subCategoryNewsOrder: {
     type: Number,
     default: 0
   }

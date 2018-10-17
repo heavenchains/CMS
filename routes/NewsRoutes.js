@@ -2,8 +2,25 @@ const express = require("express");
 const router = express.Router();
 const News = require("../models/News");
 
+// get all news
+
 router.get("/", (req, res) => {
   News.find({})
+    .populate({
+      path: "createdBy",
+      select: "username email avatar _id role permissions",
+      populate: { path: "role permissions" }
+    })
+    .populate("issue progress category subCategory")
+    .then(allNews => res.json(allNews))
+    .catch(err => res.json({ error: err.message }));
+});
+
+// get single news by ID
+
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+  News.find({ _id: id })
     .populate({
       path: "createdBy",
       select: "username email avatar _id role permissions",
@@ -11,18 +28,13 @@ router.get("/", (req, res) => {
       populate: { path: "permissions" }
     })
     .populate("issue progress category subCategory")
-    .then(allNews => res.json(allNews))
-    .catch(err => res.json({ error: err.message }));
-});
-
-router.get("/:id", (req, res) => {
-  const id = req.body.id;
-  News.findOne({ _id: id })
     .then(singleNews => res.json(singleNews))
     .catch(err => res.json({ error: err.message }));
 });
 
-router.post("/add", (req, res) => {
+// add news
+
+router.post("/create", (req, res) => {
   const newNews = new News({
     title: req.body.title,
     content: req.body.content,
@@ -44,19 +56,7 @@ router.post("/add", (req, res) => {
     .catch(err => res.json({ error: err.message }));
 });
 
-router.get("/edit/:id", (req, res) => {
-  const id = req.params.id;
-  News.find({ _id: id })
-    .populate({
-      path: "createdBy",
-      select: "username email avatar _id role permissions",
-      populate: { path: "role" },
-      populate: { path: "permissions" }
-    })
-    .populate("issue progress category subCategory")
-    .then(singleNews => res.json(singleNews))
-    .catch(err => res.json({ error: err.message }));
-});
+// update news by ID
 
 router.put("/edit/:id", (req, res) => {
   const id = req.params.id;
@@ -81,10 +81,19 @@ router.put("/edit/:id", (req, res) => {
   });
 });
 
+// delete news by ID
+
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
   News.deleteOne({ _id: id })
     .then(res.json({ msg: "News has been deleted successfully!" }))
     .catch(err => res.json({ error: err.message }));
 });
+
+// get all news that has title
+
+router.get("/newsTitles", (req, res) => {
+  News.find({}).populate();
+});
+
 module.exports = router;
